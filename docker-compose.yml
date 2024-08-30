@@ -1,18 +1,45 @@
-version: '3.8'
+version: '3'
 
 services:
-  mariadb:
-    image: mariadb:latest
-    container_name: my_mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: my_database
-      MYSQL_USER: my_user
-      MYSQL_PASSWORD: user_password
-    ports:
-      - "3306:3306"
+  php:
+    build:
+      context: .
+      dockerfile: .docker/php-fpm/Dockerfile
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - ./:/app
+    networks:
+      - laravel
+    depends_on:
+      - db
 
-volumes:
-  mariadb_data:
+  nginx:
+    build:
+      context: .
+      dockerfile: .docker/nginx/Dockerfile
+    volumes:
+      - ./:/app
+    ports:
+      - "800:80"
+    depends_on:
+      - php
+    networks:
+      - laravel
+
+  db:
+    container_name: mysql
+    image: mysql
+    volumes:
+      - .docker/db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 3306:3306
+    networks:
+      - laravel
+
+networks:
+  laravel:
+    driver: bridge
