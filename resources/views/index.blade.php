@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>Teste</h2>
+    <h2>Cadastro Teste</h2>
     <form action="{{ route('users.store') }}" method="POST">
         @csrf
         <label for="name">Name:</label>
