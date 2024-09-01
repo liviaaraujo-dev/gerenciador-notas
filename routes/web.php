@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NoteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('/');
-Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::get('/cadastro', [UserController::class, 'index'])->name('users.index');
 Route::post('/users', [UserController::class, 'store'])->name('users.store');
 
 Route::get('/login', [LoginController::class, 'loginForm'])->name('login.form');
@@ -26,3 +27,10 @@ Route::post('/login', [LoginController::class, 'login'])->name('login');
 
 // Route::get('/login', [LoginController::class, 'loginForm'])->name('users.login.form');
 // Route::post('/login', [LoginController::class, 'login'])->name('users.login');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/list-users', [UserController::class, 'listUsers'])->name('users.list');
+    Route::get('/list-notes', [NoteController::class, 'index'])->name('notes.list');
+    Route::get('/create-note', [NoteController::class, 'create'])->name('notes.create');
+    Route::post('/note', [NoteController::class, 'store'])->name('notes.store');
+    // Route::resource('users', UserController::class);
+});
